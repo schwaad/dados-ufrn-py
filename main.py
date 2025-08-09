@@ -28,20 +28,15 @@ parser.add_argument(
     help="Mostra todos os packages dos dados abertos da UFRN.",
 )
 
-parser.add_argument(
-    "--package_search",
-    nargs=1,
-    help="Baixa algum arquivo do repositório de dados abertos da UFRN a partir do nome dele",
-)
-# TO-DO: fazer o parsing do argumento package_search com os subcomandos de procurar uma substring no url dos pacotes
 package_search = subparsers.add_parser(
     "package_search",
-    help="Baixa algum arquivo do repositório de dados abertos da UFRN a partir do nome dele",
+    help="Mostra todos os arquivos dentro de um pacote ou um arquivo específico dentro do pacote a partir de uma substring",
 )
+
 package_search.add_argument(
-    "-s",
-    "--substring",
-    help="Procura por uma substring (nome do dataset) em meio a todos os datasets",
+    "package_search",
+    nargs="+",
+    help="Nome do pacote + nome do dataset dentro do pacote",
 )
 
 args = parser.parse_args()
@@ -55,7 +50,7 @@ if args.show_packages:
     output = result.stdout
     print(output[output.find("[") + 1 : -2])
 
-if args.package_search is not None:
+if args.command == "package_search" and len(args.package_search) == 1:
     url = (
         'https://dados.ufrn.br/api/3/action/package_search?q="'
         + str(args.package_search[0])
@@ -69,3 +64,19 @@ if args.package_search is not None:
 
     for url in todas_urls:
         print(url)
+
+if args.command == "package_search" and len(args.package_search) == 2:
+    url = (
+        'https://dados.ufrn.br/api/3/action/package_search?q="'
+        + str(args.package_search[0])
+        + '"'
+    )
+    result = subprocess.run(["curl", "-s", url], capture_output=True, text=True)
+    output = result.stdout
+    data = json.loads(output)
+
+    todas_urls = extrair_urls(data)
+
+    for url in todas_urls:
+        if args.package_search[1] in url:
+            print(url)
