@@ -9,15 +9,15 @@ python3 main.py -h
 A saída esperada é:
 
 ```terminal
-usage: main.py [-h] [--show_packages] {package_search} ...
+usage: main.py [-h] {package_search,show_packages} ...
 
 Optional app description
 
 positional arguments:
-  {package_search}
-    package_search  Mostra todos os arquivos dentro de um pacote ou um arquivo específico dentro do pacote a partir de uma substring
+  {package_search,show_packages}
+    package_search      Mostra todos os arquivos dentro de um pacote ou um arquivo específico dentro do pacote a partir de uma substring
+    show_packages       Mostra todos os packages dos dados abertos da UFRN.
 
 options:
-  -h, --help        show this help message and exit
-  --show_packages   Mostra todos os packages dos dados abertos da UFRN.
+  -h, --help            show this help message and exit
 ```
