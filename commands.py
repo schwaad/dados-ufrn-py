@@ -16,9 +16,7 @@ def show_packages():
 def package_search(args):
     if len(args) == 1:
         url = (
-            'https://dados.ufrn.br/api/3/action/package_search?q="'
-            + str(args.package_search[0])
-            + '"'
+            'https://dados.ufrn.br/api/3/action/package_search?q="' + str(args[0]) + '"'
         )
         result = subprocess.run(["curl", "-s", url], capture_output=True, text=True)
         output = result.stdout
@@ -27,12 +25,11 @@ def package_search(args):
         todas_urls = utils.extrair_urls(data)
 
         for url in todas_urls:
-            print(url)
+            print(url[url.rfind("/") :])
+        return
     if len(args) == 2:
         url = (
-            'https://dados.ufrn.br/api/3/action/package_search?q="'
-            + str(args.package_search[0])
-            + '"'
+            'https://dados.ufrn.br/api/3/action/package_search?q="' + str(args[0]) + '"'
         )
         result = subprocess.run(["curl", "-s", url], capture_output=True, text=True)
         output = result.stdout
@@ -41,5 +38,19 @@ def package_search(args):
         todas_urls = utils.extrair_urls(data)
 
         for url in todas_urls:
-            if args.package_search[1] in url:
-                print(url)
+            if args[1] in url:
+                print(url[url.rfind("/") :])
+        return
+
+
+def download_file(args):
+    url = 'https://dados.ufrn.br/api/3/action/package_search?q="' + str(args[0]) + '"'
+    result = subprocess.run(["curl", "-s", url], capture_output=True, text=True)
+    output = result.stdout
+    data = json.loads(output)
+
+    todas_urls = utils.extrair_urls(data)
+    print(args)
+    for arg, url in zip(args[1:], todas_urls):
+        if arg in url:
+            subprocess.run(["wget", url])
